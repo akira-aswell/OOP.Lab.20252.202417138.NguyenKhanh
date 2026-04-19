@@ -1,4 +1,0 @@
-6.1
-- If the user chooses "Cancel", the system displays the message: "You've chosen: No".
-
-- To customize button text, use JOptionPane.showOptionDialog with a custom array like Object[] options = {"I do", "I don't"}. For simple Yes/No selections, use JOptionPane.YES_NO_OPTION in the showConfirmDialog method.
