@@ -14,14 +14,21 @@ public class Track implements Playable {
 
     @Override
     public void play() {
+        if (this.getLength() <= 0) {
+            System.out.println("The track '" + this.getTitle() + "' cannot be played (length <= 0).");
+            return;
+        }
         System.out.println("Playing track: " + this.getTitle());
         System.out.println("Track length: " + this.getLength());
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Track)) return false;
-        Track other = (Track) o;
-        return this.title.equals(other.title) && this.length == other.length;
+        if (this == o) return true;
+        if (o == null || !(o instanceof Track)) return false;
+        Track track = (Track) o;
+        return this.length == track.getLength() && 
+               this.title != null && 
+               this.title.equalsIgnoreCase(track.getTitle());
     }
 }

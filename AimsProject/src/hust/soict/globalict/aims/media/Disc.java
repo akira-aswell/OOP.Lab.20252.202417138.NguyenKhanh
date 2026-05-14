@@ -6,6 +6,14 @@ public class Disc extends Media {
 
     public Disc() {}
 
+    public Disc(String title, String category, float cost, int length, String director) {
+        setTitle(title);
+        setCategory(category);
+        setCost(cost);
+        this.length = length;
+        this.director = director;
+    }
+
     public int getLength() { return length; }
     public void setLength(int length) { this.length = length; }
     public String getDirector() { return director; }
