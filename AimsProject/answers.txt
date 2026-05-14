@@ -1,25 +1,20 @@
-LAB 03 - ANSWERS
+LAB 04 - ANSWERS
 
-1. Method Overloading - Compare to an array parameter. What do you prefer in this case?
-- Varargs (variable-length arguments) is generally preferred in this case. It provides a cleaner and more flexible syntax.
- With varargs, the caller can simply pass multiple arguments separated by commas (e.g., addDigitalVideoDisc(dvd1, dvd2, 
-dvd3)) without having to explicitly create an array object first (like new DigitalVideoDisc[]{dvd1, dvd2}). 
+1. (Page 7) Which classes are aggregates of other classes? Checking all constructors of whole classes if they initialize for their parts?
+- Cart is an aggregation of Media (ArrayList<Media> itemsOrdered).
+- Store is an aggregation of Media (ArrayList<Media> itemsInStore).
+- CompactDisc is an aggregation of Track (ArrayList<Track> tracks).
+The constructors (or inline declarations) properly initialize these parts by creating new empty ArrayLists (e.g., = new ArrayList<>()).
 
-2. Is JAVA a Pass by Value or a Pass by Reference programming language?
-- Java is strictly Pass by Value. 
+2. (Page 8) Polymorphism with toString() method. Observe what happens and explain in detail.
+- When iterating through the ArrayList<Media> and calling m.toString(), the system prints the specific details of each actual object type (Book, CD, or DVD). This is Polymorphism (Dynamic Binding). Even though the reference variable 'm' is of type 'Media', Java determines the actual object type at runtime and calls the overridden toString() method belonging to that specific subclass.
 
-3. After the call of swap(jungleDVD, cinderellaDVD) why does the title of these two objects still remain?
-- Because Java is pass-by-value. When calling the swap method, Java passes a COPY of the object references (the memory 
-addresses). Inside the swap method, we are only swapping these copied references (o1 and o2), making them point to 
-different objects. However, the original references in the main method (jungleDVD and cinderellaDVD) remain completely 
-unchanged and still point to their original objects.
-
-4. After the call of changeTitle(jungleDVD, cinderellaDVD.getTitle()) why is the title of the JungleDVD changed?
-- Even though Java passes the reference by value (a copy of the reference), this copied reference still points to the 
-EXACT SAME object in the memory heap. By calling the setter method (dvd.setTitle(title)) using this reference, we directly
-modify the internal state (the title attribute) of the actual object that both the original and copied references are 
-pointing to.
-
-5. Write a toString() method for the DigitalVideoDisc class. What should be the return type of this method?
-- The return type of the toString() method must be `String`. It overrides the default toString() method from the Object 
-class to provide a string representation of the DVD's details.
+3. (Page 9) Suppose we are taking this Comparable interface approach:
+- What class should implement the Comparable interface?
+The Media class should implement Comparable<Media>.
+- In those classes, how should you implement the compareTo() method?
+We would implement public int compareTo(Media other) and compare their attributes (e.g., title, then cost).
+- Can we have two ordering rules of the item if we use this Comparable interface approach?
+No. The Comparable interface only defines ONE "natural ordering" for a class. If we want multiple sorting rules (by title-cost and by cost-title), we MUST use the Comparator interface.
+- Suppose the DVDs has a different ordering rule from the other media types. How would you modify your code?
+We would create a separate Comparator specifically for DigitalVideoDisc, or override the compareTo() method specifically inside the DigitalVideoDisc class to prioritize title, then length, then cost.
