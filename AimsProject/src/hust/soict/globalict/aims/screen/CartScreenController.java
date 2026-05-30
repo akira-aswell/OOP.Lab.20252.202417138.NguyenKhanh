@@ -4,11 +4,7 @@ import hust.soict.globalict.aims.cart.Cart;
 import hust.soict.globalict.aims.media.Media;
 import hust.soict.globalict.aims.media.Playable;
 import hust.soict.globalict.aims.exception.PlayerException;
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -25,6 +21,9 @@ public class CartScreenController {
     @FXML private Button btnRemove;
     @FXML private Button btnPlaceOrder;
     @FXML private Label costLabel;
+    @FXML private TextField tfFilter;
+    @FXML private RadioButton radioBtnFilterId;
+    @FXML private RadioButton radioBtnFilterTitle;
 
     public CartScreenController(Cart cart) {
         this.cart = cart;
@@ -36,22 +35,37 @@ public class CartScreenController {
         colMediaCategory.setCellValueFactory(new PropertyValueFactory<Media, String>("category"));
         colMediaCost.setCellValueFactory(new PropertyValueFactory<Media, Float>("cost"));
         
+        FilteredList<Media> filteredList = new FilteredList<>(cart.getItemsOrdered(), p -> true);
+        tblMedia.setItems(filteredList);
+
+        tfFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredList.setPredicate(media -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                if (radioBtnFilterId.isSelected()) {
+                    return String.valueOf(media.getId()).contains(lowerCaseFilter);
+                } else if (radioBtnFilterTitle.isSelected()) {
+                    return media.getTitle().toLowerCase().contains(lowerCaseFilter);
+                }
+                return false;
+            });
+        });
+
         updateTableData();
 
         btnPlay.setVisible(false);
         btnRemove.setVisible(false);
 
         tblMedia.getSelectionModel().selectedItemProperty().addListener(
-            new ChangeListener<Media>() {
-                @Override
-                public void changed(ObservableValue<? extends Media> observable, Media oldValue, Media newValue) {
-                    if (newValue != null) {
-                        btnRemove.setVisible(true);
-                        btnPlay.setVisible(newValue instanceof Playable);
-                    } else {
-                        btnRemove.setVisible(false);
-                        btnPlay.setVisible(false);
-                    }
+            (observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    btnRemove.setVisible(true);
+                    btnPlay.setVisible(newValue instanceof Playable);
+                } else {
+                    btnRemove.setVisible(false);
+                    btnPlay.setVisible(false);
                 }
             }
         );
@@ -66,22 +80,20 @@ public class CartScreenController {
             Media media = tblMedia.getSelectionModel().getSelectedItem();
             try {
                 ((Playable) media).play();
-                JOptionPane.showMessageDialog(null, "Playing: " + media.getTitle(), "Media Player", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Playing: " + media.getTitle());
             } catch (PlayerException ex) {
-                JOptionPane.showMessageDialog(null, ex.getMessage(), "Illegal Length", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
         btnPlaceOrder.setOnAction(e -> {
-            JOptionPane.showMessageDialog(null, "Order created successfully!\nTotal paid: " + cart.totalCost() + " $");
+            JOptionPane.showMessageDialog(null, "Order created! Total: " + cart.totalCost() + " $");
             cart.getItemsOrdered().clear();
             updateTableData();
         });
     }
 
     private void updateTableData() {
-        ObservableList<Media> observableCart = FXCollections.observableArrayList(cart.getItemsOrdered());
-        tblMedia.setItems(observableCart);
         costLabel.setText(cart.totalCost() + " $");
     }
 }

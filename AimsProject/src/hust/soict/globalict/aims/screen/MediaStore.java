@@ -16,10 +16,11 @@ import javax.swing.JPanel;
 import hust.soict.globalict.aims.media.Media;
 import hust.soict.globalict.aims.media.Playable;
 import hust.soict.globalict.aims.exception.PlayerException;
+import hust.soict.globalict.aims.cart.Cart;
 
 public class MediaStore extends JPanel {
 
-    public MediaStore(Media media) {
+    public MediaStore(Media media, Cart cart) {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         JLabel title = new JLabel(media.getTitle());
@@ -31,6 +32,13 @@ public class MediaStore extends JPanel {
 
         JPanel container = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton addToCartButton = new JButton("Add to cart");
+        addToCartButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cart.addMedia(media);
+                JOptionPane.showMessageDialog(null, media.getTitle() + " has been added to the cart!");
+            }
+        });
         container.add(addToCartButton);
 
         if (media instanceof Playable) {

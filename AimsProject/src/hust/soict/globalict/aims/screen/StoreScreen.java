@@ -8,12 +8,15 @@ import hust.soict.globalict.aims.media.DigitalVideoDisc;
 import hust.soict.globalict.aims.media.Book;
 import hust.soict.globalict.aims.media.Media;
 import hust.soict.globalict.aims.store.Store;
+import hust.soict.globalict.aims.cart.Cart;
 
 public class StoreScreen extends JFrame {
     private Store store;
+    private Cart cart;
 
-    public StoreScreen(Store store) {
+    public StoreScreen(Store store, Cart cart) {
         this.store = store;
+        this.cart = cart;
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
 
@@ -39,9 +42,18 @@ public class StoreScreen extends JFrame {
         JMenu menu = new JMenu("Options");
 
         JMenu smUpdateStore = new JMenu("Update Store");
-        smUpdateStore.add(new JMenuItem("Add Book"));
-        smUpdateStore.add(new JMenuItem("Add CD"));
-        smUpdateStore.add(new JMenuItem("Add DVD"));
+        
+        JMenuItem menuAddBook = new JMenuItem("Add Book");
+        JMenuItem menuAddCd = new JMenuItem("Add CD");
+        JMenuItem menuAddDvd = new JMenuItem("Add DVD");
+
+        menuAddBook.addActionListener(e -> new AddBookToStoreScreen(store));
+        menuAddCd.addActionListener(e -> new AddCompactDiscToStoreScreen(store));
+        menuAddDvd.addActionListener(e -> new AddDigitalVideoDiscToStoreScreen(store));
+
+        smUpdateStore.add(menuAddBook);
+        smUpdateStore.add(menuAddCd);
+        smUpdateStore.add(menuAddDvd);
 
         menu.add(smUpdateStore);
         menu.add(new JMenuItem("View store"));
@@ -82,7 +94,7 @@ public class StoreScreen extends JFrame {
         ArrayList<Media> mediaInStore = store.getItemsInStore();
         for (int i = 0; i < mediaInStore.size(); i++) {
 
-            MediaStore cell = new MediaStore(mediaInStore.get(i));
+            MediaStore cell = new MediaStore(mediaInStore.get(i), this.cart);
             center.add(cell);
         }
         
@@ -91,6 +103,7 @@ public class StoreScreen extends JFrame {
 
     public static void main(String[] args) {
         Store store = new Store();
+        Cart cart = new Cart();
 
         store.addMedia(new DigitalVideoDisc("The Lion King", "Animation", "Roger Allers", 87, 19.95f));
         store.addMedia(new DigitalVideoDisc("Star Wars", "Science Fiction", "George Lucas", 124, 24.95f));
@@ -101,6 +114,6 @@ public class StoreScreen extends JFrame {
         Book book = new Book("Java OOP", "Education", 25.5f, 300);
         store.addMedia(book);
 
-        new StoreScreen(store);
+        new StoreScreen(store, cart);
     }
 }
