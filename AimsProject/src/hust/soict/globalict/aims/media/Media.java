@@ -23,10 +23,21 @@ public abstract class Media implements Comparable<Media> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof Media)) return false;
-        Media media = (Media) o;
-        return this.title != null && this.title.equalsIgnoreCase(media.getTitle());
+        try {
+            if (this == o) return true;
+            if (o == null) return false;
+            
+            Media media = (Media) o; 
+            
+            return this.title.equalsIgnoreCase(media.getTitle()); 
+            
+        } catch (ClassCastException e) {
+            System.err.println("Error: Object is not a Media type.");
+            return false;
+        } catch (NullPointerException e) {
+            System.err.println("Error: Media title is null.");
+            return false;
+        }
     }
 
     @Override

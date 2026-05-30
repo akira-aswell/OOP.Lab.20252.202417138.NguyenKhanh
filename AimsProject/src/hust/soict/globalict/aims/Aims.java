@@ -1,6 +1,7 @@
 package hust.soict.globalict.aims;
 
 import hust.soict.globalict.aims.cart.Cart;
+import hust.soict.globalict.aims.exception.PlayerException;
 import hust.soict.globalict.aims.media.*;
 import hust.soict.globalict.aims.store.Store;
 import java.util.Scanner;
@@ -93,7 +94,7 @@ public class Aims {
             System.out.println("Options: ");
             System.out.println("--------------------------------");
             System.out.println("1. Add to cart");
-            if (media instanceof Playable) System.out.println("2. Play"); // Chỉ CD/DVD mới có nút Play
+            if (media instanceof Playable) System.out.println("2. Play"); 
             System.out.println("0. Back");
             System.out.println("--------------------------------");
             System.out.print("Please choose a number: 0-1-2: ");
@@ -103,7 +104,11 @@ public class Aims {
                 cart.addMedia(media);
                 System.out.println("Added to cart. Items in cart: " + cart.getItemsOrdered().size());
             } else if (choice == 2 && media instanceof Playable) {
-                ((Playable) media).play();
+                try {
+                    ((Playable) media).play();
+                } catch (PlayerException e) {
+                    System.err.println(e.getMessage());
+                }
             }
         } while (choice != 0);
     }
@@ -125,7 +130,11 @@ public class Aims {
         String title = scanner.nextLine();
         Media media = store.searchByTitle(title);
         if (media != null && media instanceof Playable) {
-            ((Playable) media).play();
+            try {
+                ((Playable) media).play();
+            } catch (PlayerException e) {
+                System.err.println(e.getMessage());
+            }
         } else {
             System.out.println("Media is either not in store or not playable.");
         }
@@ -234,7 +243,12 @@ public class Aims {
         System.out.print("Title: "); String t = scanner.nextLine();
         for (Media m : cart.getItemsOrdered()) {
             if (m.getTitle().equalsIgnoreCase(t) && m instanceof Playable) { 
-                ((Playable) m).play(); return; 
+                try {
+                    ((Playable) m).play(); 
+                } catch (PlayerException e) {
+                    System.err.println(e.getMessage());
+                }
+                return; 
             }
         }
         System.out.println("Cannot play.");
